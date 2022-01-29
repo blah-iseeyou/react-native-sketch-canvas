@@ -1,11 +1,5 @@
-import React from "react";
-import { AppRegistry } from "react-native";
-import App from "./App";
+import { AppRegistry } from 'react-native';
+import App from './src/App';
+import { name  } from './app.json';
 
-class Example extends React.Component {
-  render() {
-    return <App />;
-  }
-}
-
-AppRegistry.registerComponent("Example", () => Example);
+AppRegistry.registerComponent(name , () => App);

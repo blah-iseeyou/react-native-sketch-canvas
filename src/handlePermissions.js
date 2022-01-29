@@ -1,3 +1,5 @@
+// @ts-ignore
+// @ts-nocheck
 import { PermissionsAndroid, Platform } from 'react-native';
 
 export const requestPermissions = async (permissionDialogTitle, permissionDialogMessage) => {

@@ -1,3 +1,17 @@
+buildscript {
+    if (project == rootProject) {
+        repositories {
+            google()
+            mavenCentral()
+            jcenter()
+        }
+
+        dependencies {
+            classpath 'com.android.tools.build:gradle:4.0.1'
+        }
+    }
+}
+
 apply plugin: 'com.android.library'
 
 def safeExtGet(prop, fallback) {
@@ -5,28 +19,41 @@ def safeExtGet(prop, fallback) {
 }
 
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 27)
-    buildToolsVersion safeExtGet('buildToolsVersion', '27.0.3')
-
+    compileSdkVersion safeExtGet('SketchCanvas_compileSdkVersion', 29)
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', 16)
-        targetSdkVersion safeExtGet('targetSdkVersion', 27)
+        minSdkVersion safeExtGet('SketchCanvas_minSdkVersion', 16)
+        targetSdkVersion safeExtGet('SketchCanvas_targetSdkVersion', 29)
         versionCode 1
         versionName "1.0"
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
         }
     }
-    splits {
-        abi {
-            reset()
-            enable safeExtGet('enableSeparateBuildPerCPUArchitecture', false)
-            universalApk safeExtGet('universalApk', false)  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
-        }
+    lintOptions {
+        disable 'GradleCompatible'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
+repositories {
+    mavenLocal()
+    maven {
+        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+        url("$rootDir/../node_modules/react-native/android")
+    }
+    google()
+    mavenCentral()
+    jcenter()
+}
+
 dependencies {
-    provided "com.facebook.react:react-native:+"
+    //noinspection GradleDynamicVersion
+    implementation "com.facebook.react:react-native:+"  // From node_modules
 }

@@ -1,5 +1,5 @@
-'use strict';
-
+// @ts-ignore
+// @ts-nocheck
 import React from 'react'
 import PropTypes from 'prop-types'
 import ReactNative, {
@@ -14,12 +14,7 @@ import ReactNative, {
 } from 'react-native'
 import { requestPermissions } from './handlePermissions';
 
-const RNSketchCanvas = requireNativeComponent('RNSketchCanvas', SketchCanvas, {
-  nativeOnly: {
-    nativeID: true,
-    onChange: true
-  }
-});
+
 const SketchCanvasManager = NativeModules.RNSketchCanvasManager || {};
 
 class SketchCanvas extends React.Component {
@@ -75,24 +70,34 @@ class SketchCanvas extends React.Component {
   };
 
   state = {
-    text: null
+    text: this._processText(this.props.text ? this.props.text.map(t => Object.assign({}, t)) : null)
   }
 
-  constructor(props) {
-    super(props)
-    this._pathsToProcess = []
-    this._paths = []
-    this._path = null
-    this._handle = null
-    this._screenScale = Platform.OS === 'ios' ? 1 : PixelRatio.get()
-    this._offset = { x: 0, y: 0 }
-    this._size = { width: 0, height: 0 }
-    this._initialized = false
+  _pathsToProcess = []
+  _paths = []
+  _path = null
+  _handle = null
+  _screenScale = Platform.OS === 'ios' ? 1 : PixelRatio.get()
+  _offset = { x: 0, y: 0 }
+  _size = { width: 0, height: 0 }
+  _initialized = false
 
-    this.state.text = this._processText(props.text ? props.text.map(t => Object.assign({}, t)) : null)
-  }
 
-  componentWillReceiveProps(nextProps) {
+  // constructor(props) {
+  //   super(props)
+  //   this._pathsToProcess = []
+  //   this._paths = []
+  //   this._path = null
+  //   this._handle = null
+  //   this._screenScale = Platform.OS === 'ios' ? 1 : PixelRatio.get()
+  //   this._offset = { x: 0, y: 0 }
+  //   this._size = { width: 0, height: 0 }
+  //   this._initialized = false
+
+  //   this.state.
+  // }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({
       text: this._processText(nextProps.text ? nextProps.text.map(t => Object.assign({}, t)) : null)
     })
@@ -152,7 +157,7 @@ class SketchCanvas extends React.Component {
     }
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.panResponder = PanResponder.create({
       // Ask to be the responder:
       onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -168,7 +173,7 @@ class SketchCanvas extends React.Component {
           id: parseInt(Math.random() * 100000000), color: this.props.strokeColor,
           width: this.props.strokeWidth, data: []
         }
-        
+
         UIManager.dispatchViewManagerCommand(
           this._handle,
           UIManager.RNSketchCanvas.Commands.newPath,
@@ -260,4 +265,11 @@ SketchCanvas.DOCUMENT = Platform.OS === 'ios' ? UIManager.RNSketchCanvas.Constan
 SketchCanvas.LIBRARY = Platform.OS === 'ios' ? UIManager.RNSketchCanvas.Constants.NSLibraryDirectory : '';
 SketchCanvas.CACHES = Platform.OS === 'ios' ? UIManager.RNSketchCanvas.Constants.NSCachesDirectory : '';
 
-module.exports = SketchCanvas;
+const RNSketchCanvas = requireNativeComponent('RNSketchCanvas', SketchCanvas, {
+  nativeOnly: {
+    nativeID: true,
+    onChange: true
+  }
+});
+
+export default SketchCanvas;
